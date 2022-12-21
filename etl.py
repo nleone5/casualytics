@@ -50,4 +50,4 @@ try:
 
     print(' * Success - All Data Has Been Inserted into the DB.')
 except:
-    print(' * Failure - The Data Could Not Be Inserted to the DB.')
+    print('ERROR - Could Not Insert Data into the DB.')

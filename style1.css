@@ -6,7 +6,7 @@
 
 .calculator-grid {
   display: grid;
-  justify-content: left;
+  justify-content: right;
   align-content: right;
   min-height: 30vh;
   grid-template-columns: repeat(4, 50px);
@@ -49,4 +49,13 @@
 .output .current-operand {
   color: white;
   font-size: 1.5rem;
+}
+
+caption {
+
+  margin-bottom: 5px;
+  font-size: 120%;
+  padding: 2px;
+  letter-spacing: 2px;
+  font-weight: bold;
 }

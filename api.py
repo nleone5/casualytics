@@ -1,4 +1,4 @@
-import datetime
+import stats.statsapi as statsapi
 from flask import Flask, render_template, request, url_for, redirect, session
 from flask.globals import session
 from flask.helpers import url_for
@@ -30,85 +30,138 @@ except:
 
 # Create
 
-@app.route('/create')
-def create():
-    return render_template('create.html')
 
-@app.route('/insert', methods=['POST'])
-def insert():
-    # Creating a Dictionary to Store the Data
-    data = {
-        'name': request.form.get('name'),
-        'team': request.form.get('team'),
-        'position': request.form.get('position'),
-        'dob': request.form.get('dob'),
-        'height': request.form.get('height'),
-        'weight': request.form.get('weight'),
-        'bats': request.form.get('bats'),
-        'throws': request.form.get('throws'),
-        'debut': request.form.get('debut'),
-        'salary': request.form.get('salary'),
-        'image': request.form.get('image'),
-        'bio': request.form.get('bio')
-    }
-    # Inserting the Data into the DB
-    db.players.insert_one(data)
-    print(' * Success - Data Inserted')
-    return redirect(url_for('read'))
 
+@app.route("/", methods = ['GET', 'POST'])
+
+def index():
+
+    if request.method == 'POST':
+        # Getting Form Data
+        Double = request.form.get('2B')
+        Triple = request.form.get('3B')
+        AB = request.form.get('AB')
+        AVG = request.form.get('AVG')
+        Age = request.form.get('Age')
+        BB = request.form.get('BB')
+        CS = request.form.get('CS')
+        G = request.form.get('G')
+        H = request.form.get('H')
+        HBP = request.form.get('HBP')
+        HR = request.form.get('HR')
+        OBP = request.form.get('OBP')
+        OPS = request.form.get('OPS')
+        Player = request.form.get('Name')
+        Pos = request.form.get('Pos')
+        RBI = request.form.get('RBI')
+        R = request.form.get('R')
+        SB = request.form.get('SB')
+        SLG = request.form.get('SLG')
+        SO = request.form.get('SO')
+        TB = request.form.get('TB')
+        Team = request.form.get('Team')
+
+        # Inserting Data into DB
+        db.MLB.insert_one({
+            '2B': Double,
+            '3B': Triple,
+            'AB': AB,
+            'AVG': AVG,
+            'Age': Age,
+            'BB': BB,
+            'CS': CS,
+            'G': G,
+            'H': H,
+            'HBP': HBP,
+            'HR': HR,
+            'OBP': OBP,
+            'OPS': OPS,
+            'Name': Player,
+            'Pos': Pos,
+            'RBI': RBI,
+            'R': R,
+            'SB': SB,
+            'SLG': SLG,
+            'SO': SO,
+            'TB': TB,
+            'Team': Team
+        })
+        return redirect(url_for('index'))
+    else:
+        # Getting Data from DB
+        players = db.MLB.find()
+        return render_template('index.html', players = players)   
+    
 # Read
 
-@app.route('/')
-def read():
-    # Retrieving All Data from the DB
-    data = db.players.find()
-    print(' * Success - Data Retrieved')
-    return render_template('read.html', data=data)
-
+@app.route("/read/<player_id>")
+def read(player_id):
+    player = db.MLB.find_one({'_id': ObjectId(player_id)})
+    return render_template('read.html', player = player)
+    
 # Update
 
-@app.route('/update/<id>')
-def update(id):
-    # Retrieving Data from the DB
-    data = db.players.find_one({'_id': ObjectId(id)})
-    print(' * Success - Data Retrieved')
-    return render_template('update.html', data=data)
+@app.route("/update/<player_id>", methods = ['GET', 'POST'])
 
-@app.route('/edit', methods=['POST'])
+def update(player_id):
+    if request.method == 'POST':
+        # Getting Form Data
+        Double = request.form.get('2B')
+        Triple = request.form.get('3B')
+        AB = request.form.get('AB')
+        AVG = request.form.get('AVG')
+        Age = request.form.get('Age')
+        BB = request.form.get('BB')
+        CS = request.form.get('CS')
+        G = request.form.get('G')
+        H = request.form.get('H')
+        HBP = request.form.get('HBP')
+        HR = request.form.get('HR')
+        OBP = request.form.get('OBP')
+        OPS = request.form.get('OPS')
+        Player = request.form.get('Name')
+        Pos = request.form.get('Pos')
+        RBI = request.form.get('RBI')
+        R = request.form.get('R')
+        SB = request.form.get('SB')
+        SLG = request.form.get('SLG')
+        SO = request.form.get('SO')
+        TB = request.form.get('TB')
+        Team = request.form.get('Team')
 
-def edit():
-    # Creating a Dictionary to Store the Data
-    data = {
-        'name': request.form.get('name'),
-        'team': request.form.get('team'),
-        'position': request.form.get('position'),
-        'dob': request.form.get('dob'),
-        'height': request.form.get('height'),
-        'weight': request.form.get('weight'),
-        'bats': request.form.get('bats'),
-        'throws': request.form.get('throws'),
-        'debut': request.form.get('debut'),
-        'salary': request.form.get('salary'),
-        'image': request.form.get('image'),
-        'bio': request.form.get('bio')
-    }
-    # Updating the Data in the DB
-    db.players.update_one({'_id': ObjectId(request.form.get('id'))}, {'$set': data})
-    print(' * Success - Data Updated')
-    return redirect(url_for('read'))
+        # Updating Data in DB
+        db.MLB.update_one(
+            {'_id': ObjectId(player_id)},
+            {'$set': {
+                '2B': Double,
+                '3B': Triple,
+                'AB': AB,
+                'AVG': AVG,
+                'Age': Age,
+                'BB': BB,
+                'CS': CS,
+                'G': G,
+                'H': H,
+                'HBP': HBP,
+                'HR': HR,
+                'OBP': OBP,
+                'OPS': OPS,
+                'Name': Player,
+                'Pos': Pos,
+                'RBI': RBI,
+                'R': R,
+                'SB': SB,
+                'SLG': SLG,
+                'SO': SO,
+                'TB': TB,
+                'Team': Team
+            }}
+        )
+        return redirect(url_for('index'))
+    else:
+        # Getting Data from DB
+        player = db.MLB.find_one({'_id': ObjectId(player_id)})
+        return render_template('update.html', player = player)
 
-# Delete
 
-@app.route('/delete/<id>')
-def delete(id):
-    # Deleting the Data from the DB
-    db.players.delete_one({'_id': ObjectId(id)})
-    print(' * Success - Data Deleted')
-    return redirect(url_for('read'))
 
-# Running the App
-# ---------------------------------------------------------------- #
-
-if __name__ == '__main__':
-    app.run(debug=True)
-    
